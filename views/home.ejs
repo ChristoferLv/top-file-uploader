@@ -14,12 +14,19 @@
         <div class="messages">
             <% files.map((file)=> { %>
                 <div id=<%=file.id %> class="message-card">
-                    <strong>
+                    <p>
                         <%= file.title %>
-                    </strong>
-                <div class="multi-line-truncate">
-                     <%= file.content %>
-                     </div>  
+                    </p>
+                    <% if (file.type=="image" ) {%>
+                        <% const imagData=`data:${file.mime};base64, ${file.content}` %>
+                            <img src='<%-imagData %>' alt="">
+                            <% }else if(file.type=="text" ){ %>
+                                <div class="multi-line-truncate text-preview">
+                                    <%= file.content %>
+                                </div>
+                                <%}else{%>
+                                    <p>File preview not available</p>
+                                    <%}%>
                 </div>
                 <% }) %>
         </div>

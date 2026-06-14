@@ -14,7 +14,12 @@ async function fileListGet(req, res) {
             }
         }
     });
-    res.render("home", { files: files });
+    const filesWithData = files.map((file) => {
+        const mime = file.mime.split("/");
+        const extraData = { type: mime[0], extension: mime[1] }
+        return { ...file, ...extraData };
+    })
+    res.render("home", { files: filesWithData });
 }
 
 function newFileFormGet(req, res) {
@@ -26,15 +31,18 @@ function newFileFormGet(req, res) {
 async function newFileFormPost(req, res) {
     if (!req.user)
         return res.redirect("/")
-
-    const imgData = new Buffer(req.file.buffer).toString('base64');
+    let content = null;
+    if (req.file.mimetype.split("/")[0] == 'text')
+        content = new Buffer(req.file.buffer).toString('utf8');
+    else
+        content = new Buffer(req.file.buffer).toString('base64');
     try {
         const result = await prisma.files.create({
             data: {
                 title: req.file.originalname,
                 mime: req.file.mimetype,
                 size: req.file.size,
-                content: imgData,
+                content: content,
                 ownerId: req.user.id
             }
         });
