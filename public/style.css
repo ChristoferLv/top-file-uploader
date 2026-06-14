@@ -70,6 +70,10 @@ h1 {
     right: 5px;
 }
 
+.message-card form input{
+    cursor: pointer;
+}
+
 .del-btn {
     width: 40px;
     margin: 0;
@@ -154,4 +158,13 @@ button {
   -webkit-line-clamp: 5;   /* Change this to your preferred number of lines */
   -webkit-box-orient: vertical;  
   overflow: hidden;        /* Hides the remaining text lines */
+}
+
+hr {
+  width: 100%;       /* Restores full horizontal width */
+  flex-shrink: 0;    /* Prevents flexbox from squishing it */
+}
+
+.home-heading{
+    text-transform: capitalize;
 }

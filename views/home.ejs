@@ -10,13 +10,14 @@
 
 <body>
     <%- include("partials/header.ejs") %>
-        <h1>Your files</h1>
+        <h1 class="home-heading">Your files: <%= user.username %></h1>
         <div class="messages">
             <% files.map((file)=> { %>
                 <div id=<%=file.id %> class="message-card">
                     <p>
-                        <%= file.title %>
+                        <strong><%= file.title %></strong>
                     </p>
+                    <hr>
                     <% if (file.type=="image" ) {%>
                         <% const imagData=`data:${file.mime};base64, ${file.content}` %>
                             <img src='<%-imagData %>' alt="">

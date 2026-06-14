@@ -13,6 +13,7 @@ const validateNewUser = [
         .trim()
         .isLength({ min: 3 }).withMessage("Username must have at leats 3 characteres")
         .isLength({ max: 30 }).withMessage("The maximum username length is 30")
+        .toLowerCase()
         .custom(async value => {
             const exists = await checkUsernameUsed(value);
             if (exists)
