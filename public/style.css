@@ -148,3 +148,10 @@ button {
     margin-top: -12px;
     margin-left: 5px;
 }
+
+.multi-line-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;   /* Change this to your preferred number of lines */
+  -webkit-box-orient: vertical;  
+  overflow: hidden;        /* Hides the remaining text lines */
+}

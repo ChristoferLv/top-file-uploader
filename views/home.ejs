@@ -10,16 +10,16 @@
 
 <body>
     <%- include("partials/header.ejs") %>
-        <p>home</p>
+        <h1>Your files</h1>
         <div class="messages">
             <% files.map((file)=> { %>
                 <div id=<%=file.id %> class="message-card">
                     <strong>
                         <%= file.title %>
                     </strong>
-                
+                <div class="multi-line-truncate">
                      <%= file.content %>
-                       
+                     </div>  
                 </div>
                 <% }) %>
         </div>

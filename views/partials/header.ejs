@@ -4,8 +4,8 @@
     </a>
     <% if (locals.user) {%>
         <div class="categories-container">
-            <a href="/auth/log-out" class="category-item">LOG OUT</a>
             <a href="/files/new-file" class="category-item">UPLOAD FILE</a>
+            <a href="/auth/log-out" class="category-item">LOG OUT</a>
         </div>
         <% } %>
             <% if (!locals.user) {%>

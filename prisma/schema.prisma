@@ -18,14 +18,16 @@ model users {
   id       Int     @id @default(autoincrement())
   username String  @unique
   password String
-  name     String?
   files    files[]
 }
 
 model files {
-  id      Int     @id @default(autoincrement())
-  title   String
-  content String?
-  owner   users   @relation(fields: [ownerId], references: [id])
-  ownerId Int
+  id          Int      @id @default(autoincrement())
+  title       String
+  mime        String
+  content     String   @db.Text
+  size        Int
+  uploaded_at DateTime @default(now())
+  owner       users    @relation(fields: [ownerId], references: [id])
+  ownerId     Int
 }
