@@ -1,14 +1,12 @@
 import 'dotenv/config';
 import { join } from "node:path";
-import { db } from "./db/pools.js";
 import express, { urlencoded } from "express";
 import session from "express-session";
 import { passport } from "./authUtils.js";
-import bcrypt from 'bcryptjs';
-import { Strategy as LocalStrategy } from 'passport-local';
 import authRouter from "./routes/authRoutes.js";
 import { prisma } from "./lib/prisma.js";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+import filesRouter from './routes/fileRoutes.js';
 const dir = import.meta.dirname;
 const assetsPath = join(dir, "public");
 
@@ -42,9 +40,10 @@ app.use((req, res, next) => {
 
 
 app.get("/", (req, res) => {
-  res.render("home")
+  res.redirect("files")
 });
 
+app.use("/files", filesRouter)
 app.use("/auth", authRouter)
 
 app.use((err, req, res, next) => {

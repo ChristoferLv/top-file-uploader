@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <title>Drove</title>
+</head>
+
+<body>
+    <%- include("partials/header.ejs") %>
+        <div class="login">
+            <form action="/files/new-file" method="POST">
+                <h1>Upload new file</h1>
+                <label for="title">File Title</label>
+                <input type="text" name="title" id="title" value="<%=locals.recoveredTitle%>" required minlength="3">
+                <% if (locals.errors && errors.title) {%>
+                    <p class="error">
+                        <%=errors.title%>
+                    </p>
+                    <% } %>
+                        <label for="content">Content</label>
+                        <input type="text" name="content" id="content" value="<%=locals.recoveredContent%>" required
+                            minlength="3">
+                        <% if (locals.errors && errors.content) {%>
+                            <p class="error">
+                                <%=errors.content%>
+                            </p>
+                            <% } %>
+                                <div class="wrap">
+                                    <button type="submit">
+                                        Submit
+                                    </button>
+                                </div>
+            </form>
+        </div>
+</body>
+
+</html>

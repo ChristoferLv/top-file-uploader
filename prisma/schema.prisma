@@ -19,14 +19,13 @@ model users {
   username String  @unique
   password String
   name     String?
-  posts    Post[]
+  files    files[]
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    users    @relation(fields: [authorId], references: [id])
-  authorId  Int
+model files {
+  id      Int     @id @default(autoincrement())
+  title   String
+  content String?
+  owner   users   @relation(fields: [ownerId], references: [id])
+  ownerId Int
 }
