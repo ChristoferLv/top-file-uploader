@@ -32,10 +32,12 @@ async function newFileFormPost(req, res) {
     if (!req.user)
         return res.redirect("/")
     let content = null;
+    console.log(req.file)
     if (req.file.mimetype.split("/")[0] == 'text')
         content = new Buffer(req.file.buffer).toString('utf8');
     else
         content = new Buffer(req.file.buffer).toString('base64');
+
     try {
         const result = await prisma.files.create({
             data: {
@@ -46,7 +48,6 @@ async function newFileFormPost(req, res) {
                 ownerId: req.user.id
             }
         });
-        console.log(result.id, result.title)
         res.redirect("/files/new-file")
     } catch (error) {
         console.log(error);
@@ -54,9 +55,22 @@ async function newFileFormPost(req, res) {
     }
 }
 
+/**
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+async function downloadFile(req, res) {
+    const file = await prisma.files.findUnique({ where: { id: parseInt(req.params.id) } });
+    const myBuffer = Buffer.from(file.content, 'base64');
+    res.setHeader('Content-Disposition', `attachment; filename=${file.title}`);
+    res.setHeader('Content-Type', `${file.mime}`);
+    res.send(myBuffer);
+}
+
 
 export {
     newFileFormGet,
     newFileFormPost,
-    fileListGet
+    fileListGet,
+    downloadFile
 }

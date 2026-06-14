@@ -27,6 +27,9 @@
                                 <%}else{%>
                                     <p>File preview not available</p>
                                     <%}%>
+                                        <form action="/files/download/<%= file.id %>" method="get">
+                                            <input type="submit" value="Download">
+                                        </form>
                 </div>
                 <% }) %>
         </div>
