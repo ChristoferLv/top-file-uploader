@@ -1,0 +1,25 @@
+<header>
+    <a href="/">
+        <p>Secret Club Message Board</p>
+    </a>
+    <% if (locals.user) {%>
+        <div class="categories-container">
+            <% if (locals.user.is_member) {%>
+                <a href="/messages/new" class="category-item">Post new Message</a>
+                <%}%>
+                    <a href="/auth/log-out" class="category-item">LOG OUT</a>
+                    <% if (!locals.user.is_member) {%>
+                        <a href="/user/upgrade-to-member" class="category-item">Have a member code?</a>
+                        <% } %>
+                            <% if (locals.user.is_member && !locals.user.is_admin) {%>
+                                <a href="/user/upgrade-to-admin" class="category-item">Have a admin code?</a>
+                                <% } %>
+        </div>
+        <% } %>
+            <% if (!locals.user) {%>
+                <div class="categories-container">
+                    <a href="/auth/log-in" class="category-item">LOG IN</a>
+                    <a href="/auth/sign-up" class="category-item">SIGN UP</a>
+                </div>
+                <% } %>
+</header>

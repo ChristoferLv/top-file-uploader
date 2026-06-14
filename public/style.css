@@ -1,0 +1,150 @@
+body {
+    margin: 0;
+    background-color: #f2f3f4;
+    height: 100vh;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #004d8e;
+    padding: 10px 0;
+}
+
+header>a>p {
+    color: white;
+    font-size: 30px;
+    font-family: sans-serif;
+    margin: 0;
+    margin-left: 10px;
+}
+
+.categories-container {
+    display: flex;
+    gap: 0 10px;
+    margin-right: 10px;
+}
+
+header a {
+    text-decoration: none;
+}
+
+h1 {
+    margin-left: 6px;
+}
+
+.category-item {
+    border: 1px black solid;
+    background-color: rgb(255, 228, 56);
+    color: black;
+    padding: 10px;
+}
+
+.messages {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 10vw));
+    gap: 10px;
+    padding: 10px;
+}
+
+.message-card {
+    border: 1px solid black;
+    background-color: #fefefe;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    word-break: break-all;
+    white-space: normal;
+    position: relative;
+    padding-bottom: 30px;
+}
+
+.message-card p {
+    margin: 3px;
+}
+
+.message-card form {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+}
+
+.del-btn {
+    width: 40px;
+    margin: 0;
+    padding: 2px 1px;
+    cursor: pointer;
+}
+
+.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90%;
+    overflow-y: hidden;
+}
+
+.login form {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    padding: 10px 20px;
+    transition: transform 0.2s;
+    width: 500px;
+    text-align: center;
+
+}
+
+label {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    text-align: left;
+    color: #555;
+    font-weight: bold;
+}
+
+input {
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    background-color: #4CAF50;
+    width: 100%;
+    font-size: 16px;
+}
+
+.wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.alert button {
+    background-color: rgb(226, 0, 0);
+}
+
+.alert button:hover {
+    background-color: rgb(211, 0, 35);
+}
+
+.error {
+    text-align: start;
+    margin-top: -12px;
+    margin-left: 5px;
+}

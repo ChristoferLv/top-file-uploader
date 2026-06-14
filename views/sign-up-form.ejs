@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <%- include("partials/header.ejs") %>
+    <div class="login">
+      <form action="/auth/sign-up" method="POST">
+        <h1>Become a member</h1>
+        <label for="username">
+          Username:
+        </label>
+        <input type="text" id="username" name="username" placeholder="Enter your Username" required
+          value="<%=locals.recoveredUsername%>" required minlength="3">
+        <% if (locals.errors && errors.username) {%>
+          <p class="error">
+            <%-errors.username%>
+          </p>
+          <% } %>
+            <label for="password">
+              Password:
+            </label>
+            <input type="password" id="password" name="password" placeholder="Enter your Password" required
+              minlength="3">
+            <% if (locals.errors && errors.password) {%>
+              <p class="error">
+                <%=errors.password%>
+              </p>
+              <% } %>
+              <% if (locals.errors && errors.confirmPassword) {%>
+              <p class="error">
+                <%=errors.confirmPassword%>
+              </p>
+              <% } %>
+              <label for="confirmPassword">
+              Confirm Your Password:
+            </label>
+              <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Enter the password again" required
+                minlength="3">
+                <div class="wrap">
+                  <button type="submit">
+                    Submit
+                  </button>
+                </div>
+                <p>Already a member?
+                  <a href="/auth/log-in" style="text-decoration: none;">
+                    Log in here
+                  </a>
+                </p>
+      </form>
+    </div>
+</body>
+
+</html>
