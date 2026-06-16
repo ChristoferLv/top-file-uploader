@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <title>Drove</title>
+</head>
+
+<body>
+    <%- include("partials/header.ejs") %>
+        <div class="login">
+            <div class="file-details ">
+                <div class="file-preview">
+                    <% if (file.type=="image" ) {%>
+                        <% const imagData=`data:${file.mime};base64, ${file.content}` %>
+                            <img src='<%-imagData %>' alt="">
+                            <% }else if(file.type=="text" ){ %>
+                                <div class="multi-line-truncate text-preview">
+                                    <%= file.content %>
+                                </div>
+                                <%}else{%>
+                                    <p>File preview not available</p>
+                                    <%}%>
+                </div>
+                <div class="file-data">
+                    <h1>File Details</h1>
+                    <div class="multi-line-truncate text-preview">
+                        <%= file.title %>
+                    </div>
+                    <p>Type: <%=file.mime %>
+                    </p>
+                    <p>Size (bytes): <%=file.size %>
+                    </p>
+                    <p>Upload date: <br><%= file.uploaded_at.toDateString()%> - <%=file.uploaded_at.toLocaleTimeString() %>
+                    </p>
+                    <form action="/files/download/<%= file.id %>" method="get">
+                        <input type="submit" value="Download">
+                    </form>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>

@@ -1,5 +1,11 @@
 import { prisma } from "../lib/prisma.js"
 
+function getContentType(file) {
+    const mime = file.mime.split("/");
+    const extraData = { type: mime[0], extension: mime[1] }
+    return extraData;
+}
+
 async function fileListGet(req, res) {
     if (!req.user)
         return res.redirect("/auth/log-in")
@@ -15,8 +21,7 @@ async function fileListGet(req, res) {
         }
     });
     const filesWithData = files.map((file) => {
-        const mime = file.mime.split("/");
-        const extraData = { type: mime[0], extension: mime[1] }
+        const extraData = getContentType(file);
         return { ...file, ...extraData };
     })
     res.render("home", { files: filesWithData });
@@ -32,7 +37,6 @@ async function newFileFormPost(req, res) {
     if (!req.user)
         return res.redirect("/")
     let content = null;
-    console.log(req.file)
     if (req.file.mimetype.split("/")[0] == 'text')
         content = new Buffer(req.file.buffer).toString('utf8');
     else
@@ -55,10 +59,6 @@ async function newFileFormPost(req, res) {
     }
 }
 
-/**
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- */
 async function downloadFile(req, res) {
     const file = await prisma.files.findUnique({ where: { id: parseInt(req.params.id) } });
     const myBuffer = Buffer.from(file.content, 'base64');
@@ -67,10 +67,23 @@ async function downloadFile(req, res) {
     res.send(myBuffer);
 }
 
+async function getFileById(req, res) {
+    const file = await prisma.files.findUnique({
+        where:
+            { id: parseInt(req.params.id) }, include: {
+                owner:
+                    { select: { username: true } }
+            }
+    });
+    const extraData = getContentType(file);
+    res.render("file-details", { file: { ...file, ...extraData } });
+}
+
 
 export {
     newFileFormGet,
     newFileFormPost,
     fileListGet,
-    downloadFile
+    downloadFile,
+    getFileById
 }

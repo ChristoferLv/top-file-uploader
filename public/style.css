@@ -57,21 +57,34 @@ h1 {
     word-break: break-all;
     white-space: normal;
     position: relative;
-    padding-bottom: 30px;
+    height: 250px;
+}
+
+.message-card img {
+    max-height: 60%;
+}
+
+.message-card-a {
+    text-decoration: none;
+    color: black;
 }
 
 .message-card p {
     margin: 3px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .message-card form {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
+    align-self: flex-end;
+    margin-top: auto;
 }
 
-.message-card form input{
+.message-card form input {
     cursor: pointer;
+    margin: 0;
+    margin-top: 5px;
 }
 
 .del-btn {
@@ -89,7 +102,7 @@ h1 {
     overflow-y: hidden;
 }
 
-.login form {
+.login>form {
     background-color: #fff;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -154,17 +167,47 @@ button {
 }
 
 .multi-line-truncate {
-  display: -webkit-box;
-  -webkit-line-clamp: 5;   /* Change this to your preferred number of lines */
-  -webkit-box-orient: vertical;  
-  overflow: hidden;        /* Hides the remaining text lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    /* Change this to your preferred number of lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    /* Hides the remaining text lines */
 }
 
 hr {
-  width: 100%;       /* Restores full horizontal width */
-  flex-shrink: 0;    /* Prevents flexbox from squishing it */
+    width: 100%;
+    /* Restores full horizontal width */
+    flex-shrink: 0;
+    /* Prevents flexbox from squishing it */
 }
 
-.home-heading{
+.home-heading {
     text-transform: capitalize;
+}
+
+.file-details {
+    display: flex;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    padding: 10px 20px;
+    transition: transform 0.2s;
+    width: 500px;
+    gap: 0 15px;
+    align-items: center;
+     word-break: break-all;
+    white-space: normal;
+}
+
+.file-details div {
+    flex-grow: 0;
+    flex-basis: 250px;
+    flex-shrink: 0;
+}
+
+.file-details img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }
