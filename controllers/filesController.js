@@ -61,7 +61,8 @@ async function newFileFormPost(req, res) {
 
 async function downloadFile(req, res) {
     const file = await prisma.files.findUnique({ where: { id: parseInt(req.params.id) } });
-    const myBuffer = Buffer.from(file.content, 'base64');
+    const encode = file.mime.split("/")[0] == 'text' ? "utf8" : "base64";
+    const myBuffer = Buffer.from(file.content, encode);
     res.setHeader('Content-Disposition', `attachment; filename=${file.title}`);
     res.setHeader('Content-Type', `${file.mime}`);
     res.send(myBuffer);
