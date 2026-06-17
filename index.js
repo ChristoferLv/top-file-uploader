@@ -7,6 +7,7 @@ import authRouter from "./routes/authRoutes.js";
 import { prisma } from "./lib/prisma.js";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import filesRouter from './routes/fileRoutes.js';
+import folderRoutes from './routes/folderRoutes.js';
 const dir = import.meta.dirname;
 const assetsPath = join(dir, "public");
 
@@ -44,6 +45,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/files", filesRouter)
+app.use("/folders", folderRoutes)
 app.use("/auth", authRouter)
 
 app.use((err, req, res, next) => {

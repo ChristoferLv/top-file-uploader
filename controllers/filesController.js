@@ -1,4 +1,5 @@
 import { prisma } from "../lib/prisma.js"
+import { getAllFolders } from "./folderController.js";
 
 function getContentType(file) {
     const mime = file.mime.split("/");
@@ -6,25 +7,37 @@ function getContentType(file) {
     return extraData;
 }
 
+async function getAllFiles(req) {
+    try {
+        const files = await prisma.files.findMany({
+            where:
+                { ownerId: req.user.id },
+            include: {
+                owner:
+                {
+                    select:
+                        { username: true }
+                }
+            }
+        });
+        return files;
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 async function fileListGet(req, res) {
     if (!req.user)
         return res.redirect("/auth/log-in")
-    const files = await prisma.files.findMany({
-        where:
-            { ownerId: req.user.id },
-        include: {
-            owner:
-            {
-                select:
-                    { username: true }
-            }
-        }
-    });
+    const files = await getAllFiles(req);
     const filesWithData = files.map((file) => {
         const extraData = getContentType(file);
         return { ...file, ...extraData };
-    })
-    res.render("home", { files: filesWithData });
+    });
+
+    const folders = await getAllFolders(req);
+    res.render("home", { files: filesWithData, folders: folders });
 }
 
 function newFileFormGet(req, res) {

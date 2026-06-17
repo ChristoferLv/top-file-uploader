@@ -10,31 +10,17 @@
 
 <body>
     <%- include("partials/header.ejs") %>
-        <h1 class="home-heading">Your files: <%= user.username %>
+        <h1 class="home-heading">Files in <%= locals.name %>:
         </h1>
         <div class="messages">
             <% files.map((file)=> { %>
-                <a class="message-card-a" href="/files/file/<%=file.id %>">
-                    <div id=<%=file.id %> class="message-card">
+                <a class="message-card-a" href="/file/<%=file.id %>">
+                    <div id=<%=file.id %> class="message-card file">
                         <p>
                             <strong>
                                 <%= file.title %>
                             </strong>
                         </p>
-                        <hr>
-                        <% if (file.type=="image" ) {%>
-                            <% const imagData=`data:${file.mime};base64, ${file.content}` %>
-                                <img src='<%-imagData %>' alt="">
-                                <% }else if(file.type=="text" ){ %>
-                                    <div class="multi-line-truncate text-preview">
-                                        <%= file.content %>
-                                    </div>
-                                    <%}else{%>
-                                        <p>File preview not available</p>
-                                        <%}%>
-                                            <form action="/files/download/<%= file.id %>" method="get">
-                                                <input type="submit" value="Download">
-                                            </form>
                     </div>
                 </a>
                 <% }) %>

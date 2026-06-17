@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <title>Drove</title>
+</head>
+
+<body>
+    <%- include("partials/header.ejs") %>
+        <div class="new-folder-container">
+            <h3>Create new Folder</h3>
+            <form action="/folders" method="POST">
+                <label for="name">Folder name</label>
+                <input type="text" name="name" id="name" value=<%=locals.nameValue??"" %>>
+
+                <input type="submit" value="Create">
+            </form>
+        </div>
+        <h1 class="home-heading">Hello, <%= user.username %>. Your files: 
+        </h1>
+        <div class="messages">
+            <% folders.map((folder)=> { %>
+                <a class="message-card-a" href="/folder/<%=folder.id %>">
+                    <div id=<%=folder.id %> class="message-card folder">
+                        <p>
+                            <strong>
+                                <%= folder.title %>
+                            </strong>
+                        </p>
+                    </div>
+                </a>
+                <% }) %>
+                </div>
+                <hr class="separator">
+                <div class="messages">
+            <% files.map((file)=> { %>
+                <a class="message-card-a" href="/files/file/<%=file.id %>">
+                    <div id=<%=file.id %> class="message-card">
+                        <p>
+                            <strong>
+                                <%= file.title %>
+                            </strong>
+                        </p>
+                        <hr>
+                        <% if (file.type=="image" ) {%>
+                            <% const imagData=`data:${file.mime};base64, ${file.content}` %>
+                                <img src='<%-imagData %>' alt="">
+                                <% }else if(file.type=="text" ){ %>
+                                    <div class="multi-line-truncate text-preview">
+                                        <%= file.content %>
+                                    </div>
+                                    <%}else{%>
+                                        <p>File preview not available</p>
+                                        <%}%>
+                                            <form action="/files/download/<%= file.id %>" method="get">
+                                                <input type="submit" value="Download">
+                                            </form>
+                    </div>
+                </a>
+                <% }) %>
+        </div>
+</body>
+
+</html>
