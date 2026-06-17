@@ -21,6 +21,14 @@
                 </div>
             </form>
         </div>
+        <div class="folder-actions">
+            <p>Actions:</p>
+            <button onclick="showDialog()">Rename Folder</button>
+            <form action="/folder/<%=folderId %>/delete" method="post">
+                <button>Delete Folder</button>
+            </form>
+
+        </div>
         <h1 class="home-heading">Files in <%= locals.name %>:
         </h1>
         <div class="messages">
@@ -50,6 +58,44 @@
                 </a>
                 <% }) %>
         </div>
+
+
+
+        <dialog id="update-name-dialog">
+            <% if(locals.recoveredValues) { %>
+                <%- include("partials/errors.ejs") %>
+                    <% } %>
+                        <form id="updateName" method="POST" action="/folder/<%= locals.folderId %>/rename">
+                            <label for="name">New name</label>
+                            <input id="name" name="name" type="text">
+                            <input type="submit" value="Save">
+                        </form>
+                        <button onclick="closeDialog()">Close</button>
+        </dialog>
+
+
+        <script>
+            const myFormDialog = document.getElementById('update-name-dialog');
+            const updateForm = document.getElementById('updateName');
+            const name = myFormDialog.querySelector("#name");
+
+            let recovered = null;
+
+            recovered = '<%- locals.recoveredName %>'
+
+            if (recovered) {
+                name.value = recovered;
+            }
+
+            function closeDialog() {
+                myFormDialog.close();
+            }
+
+            function showDialog() {
+                name.value = '<%- locals.name %>';
+                myFormDialog.showModal();
+            }
+        </script>
 </body>
 
 </html>

@@ -72,7 +72,8 @@ async function newFileFormPost(req, res) {
 async function newFileOnFolderFormPost(req, res) {
     if (!req.user)
         return res.redirect("/")
-    const folder = await prisma.folders.findUnique({ where: { id: parseInt(req.params.id) } });
+    const id = parseInt(req.params.id);
+    const folder = await prisma.folders.findUnique({ where: { id: id } });
     if (!folder || folder.ownerId != req.user.id)
         res.redirect("/");
     let content = null;
@@ -92,7 +93,7 @@ async function newFileOnFolderFormPost(req, res) {
                 folderId: folder.id
             }
         });
-        res.redirect("/files")
+        res.redirect("/folder/"+id)
     } catch (error) {
         console.log(error);
         next(error);

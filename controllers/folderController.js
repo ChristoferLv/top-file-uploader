@@ -46,8 +46,38 @@ async function fileListFromFolderGet(req, res) {
     res.render("inside-folder", { files: filesWithData, name: folder.title, folderId: folder.id });
 }
 
+async function renameFolder(req, res) {
+    if (!req.user)
+        return res.redirect("/auth/log-in");
+
+    const id = parseInt(req.params.id);
+    const folder = await prisma.folders.findUnique({ where: { id: id } });
+    if (folder.ownerId != parseInt(req.user.id)) {
+        return res.redirect("/");
+    }
+
+    const result = await prisma.folders.update({ where: { id: id }, data: { title: req.body.name } })
+    return res.redirect("/folder/" + id);
+}
+
+async function deleteFolder(req, res) {
+    if (!req.user)
+        return res.redirect("/auth/log-in");
+
+    const id = parseInt(req.params.id);
+    const folder = await prisma.folders.findUnique({ where: { id: id } });
+    if (folder.ownerId != parseInt(req.user.id)) {
+        return res.redirect("/");
+    }
+
+    const result = await prisma.folders.delete({ where: { id: id } });
+    return res.redirect("/files");
+}
+
 export {
     createNewFolderPost,
     getAllFolders,
-    fileListFromFolderGet
+    fileListFromFolderGet,
+    renameFolder,
+    deleteFolder
 }
