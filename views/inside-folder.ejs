@@ -11,31 +11,19 @@
 <body>
     <%- include("partials/header.ejs") %>
         <div class="new-folder-container">
-            <h3>Create new Folder</h3>
-            <form action="/folders" method="POST">
-                <label for="name">Folder name</label>
-                <input type="text" name="name" id="name" value=<%=locals.nameValue??"" %>>
-
-                <input type="submit" value="Create">
+            <h3>Upload File</h3>
+            <form action="/files/upload-on-folder/<%=folderId %>" method="POST" enctype="multipart/form-data">
+                <input type="file" name="fileContent" />
+                <div class="wrap">
+                    <button type="submit">
+                        Submit
+                    </button>
+                </div>
             </form>
         </div>
-        <h1 class="home-heading">Hello, <%= user.username %>. Your files: 
+        <h1 class="home-heading">Files in <%= locals.name %>:
         </h1>
         <div class="messages">
-            <% folders.map((folder)=> { %>
-                <a class="message-card-a" href="/folder/<%=folder.id %>">
-                    <div id=<%=folder.id %> class="message-card folder">
-                        <p>
-                            <strong>
-                                <%= folder.title %>
-                            </strong>
-                        </p>
-                    </div>
-                </a>
-                <% }) %>
-                </div>
-                <hr class="separator">
-                <div class="messages">
             <% files.map((file)=> { %>
                 <a class="message-card-a" href="/files/file/<%=file.id %>">
                     <div id=<%=file.id %> class="message-card">

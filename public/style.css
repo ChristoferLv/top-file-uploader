@@ -267,3 +267,7 @@ hr {
     /* Slants the top-right corner of the tab */
     border-radius: 8px 12px 0 0;
 }
+
+.new-file-forms{
+    display: flex;
+}

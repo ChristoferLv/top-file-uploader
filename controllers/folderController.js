@@ -1,4 +1,5 @@
 import { prisma } from "../lib/prisma.js";
+import { getContentType } from "../utils/fileUtils.js";
 
 async function getAllFolders(req) {
     try {
@@ -32,12 +33,17 @@ async function fileListFromFolderGet(req, res) {
     if (!req.user)
         return res.redirect("/auth/log-in");
 
-    const folder = await prisma.folders.findUnique({ where: { id: req.params.id } });
-    if (folder.ownerId != parseInt(req.params.id))
+    const folder = await prisma.folders.findUnique({ where: { id: parseInt(req.params.id) } });
+    if (folder.ownerId != parseInt(req.user.id)) {
         return res.redirect("/");
+    }
 
     const result = await prisma.files.findMany({ where: { folders: folder } });
-    res.render("inside-folder", { files: result, name:folder.title });
+    const filesWithData = result.map((file) => {
+        const extraData = getContentType(file);
+        return { ...file, ...extraData };
+    });
+    res.render("inside-folder", { files: filesWithData, name: folder.title, folderId: folder.id });
 }
 
 export {

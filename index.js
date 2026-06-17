@@ -45,7 +45,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/files", filesRouter)
-app.use("/folders", folderRoutes)
+app.use("/folder", folderRoutes)
 app.use("/auth", authRouter)
 
 app.use((err, req, res, next) => {

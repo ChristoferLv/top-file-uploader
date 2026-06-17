@@ -1,17 +1,14 @@
 import { prisma } from "../lib/prisma.js"
+import { getContentType } from "../utils/fileUtils.js";
 import { getAllFolders } from "./folderController.js";
-
-function getContentType(file) {
-    const mime = file.mime.split("/");
-    const extraData = { type: mime[0], extension: mime[1] }
-    return extraData;
-}
 
 async function getAllFiles(req) {
     try {
         const files = await prisma.files.findMany({
             where:
-                { ownerId: req.user.id },
+                { ownerId: req.user.id,
+                    AND:{folderId:null}
+                 },
             include: {
                 owner:
                 {
@@ -51,9 +48,9 @@ async function newFileFormPost(req, res) {
         return res.redirect("/")
     let content = null;
     if (req.file.mimetype.split("/")[0] == 'text')
-        content = new Buffer(req.file.buffer).toString('utf8');
+        content = new Buffer.from(req.file.buffer).toString('utf8');
     else
-        content = new Buffer(req.file.buffer).toString('base64');
+        content = new Buffer.from(req.file.buffer).toString('base64');
 
     try {
         const result = await prisma.files.create({
@@ -65,7 +62,37 @@ async function newFileFormPost(req, res) {
                 ownerId: req.user.id
             }
         });
-        res.redirect("/files/new-file")
+        res.redirect("/files")
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+async function newFileOnFolderFormPost(req, res) {
+    if (!req.user)
+        return res.redirect("/")
+    const folder = await prisma.folders.findUnique({ where: { id: parseInt(req.params.id) } });
+    if (!folder || folder.ownerId != req.user.id)
+        res.redirect("/");
+    let content = null;
+    if (req.file.mimetype.split("/")[0] == 'text')
+        content = new Buffer(req.file.buffer).toString('utf8');
+    else
+        content = new Buffer(req.file.buffer).toString('base64');
+
+    try {
+        const result = await prisma.files.create({
+            data: {
+                title: req.file.originalname,
+                mime: req.file.mimetype,
+                size: req.file.size,
+                content: content,
+                ownerId: req.user.id,
+                folderId: folder.id
+            }
+        });
+        res.redirect("/files")
     } catch (error) {
         console.log(error);
         next(error);
@@ -99,5 +126,6 @@ export {
     newFileFormPost,
     fileListGet,
     downloadFile,
-    getFileById
+    getFileById,
+    newFileOnFolderFormPost
 }

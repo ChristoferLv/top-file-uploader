@@ -5,6 +5,8 @@ const folderRoutes = Router();
 
 folderRoutes.get("/:id", fileListFromFolderGet)
 folderRoutes.post("/", createNewFolderPost)
+// folderRoutes.post("/:id/add-file", fileListFromFolderGet)
+
 
 
 export default folderRoutes;
