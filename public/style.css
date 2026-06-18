@@ -43,8 +43,7 @@ h1 {
 
 .files {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    justify-content: stretch;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 10px;
     padding: 10px;
     padding-top: 0;
@@ -78,15 +77,22 @@ h1 {
     text-overflow: ellipsis;
 }
 
-.file-card form {
-    align-self: flex-end;
+.file-actions{
     margin-top: auto;
+    display: flex;
+    justify-content: space-between;
 }
 
 .file-card form input {
     cursor: pointer;
     margin: 0;
     margin-top: 5px;
+}
+
+.delete input{
+    background-color: rgb(207, 0, 0);
+    color: white;
+    font-weight: bold;
 }
 
 .details-container,

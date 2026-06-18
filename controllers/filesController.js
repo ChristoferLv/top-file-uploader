@@ -6,9 +6,10 @@ async function getAllFiles(req) {
     try {
         const files = await prisma.files.findMany({
             where:
-                { ownerId: req.user.id,
-                    AND:{folderId:null}
-                 },
+            {
+                ownerId: req.user.id,
+                AND: { folderId: null }
+            },
             include: {
                 owner:
                 {
@@ -78,9 +79,9 @@ async function newFileOnFolderFormPost(req, res) {
         res.redirect("/");
     let content = null;
     if (req.file.mimetype.split("/")[0] == 'text')
-        content = new Buffer(req.file.buffer).toString('utf8');
+        content = new Buffer.from(req.file.buffer).toString('utf8');
     else
-        content = new Buffer(req.file.buffer).toString('base64');
+        content = new Buffer.from(req.file.buffer).toString('base64');
 
     try {
         const result = await prisma.files.create({
@@ -93,7 +94,7 @@ async function newFileOnFolderFormPost(req, res) {
                 folderId: folder.id
             }
         });
-        res.redirect("/folder/"+id)
+        res.redirect("/folder/" + id)
     } catch (error) {
         console.log(error);
         next(error);
@@ -121,6 +122,25 @@ async function getFileById(req, res) {
     res.render("file-details", { file: { ...file, ...extraData } });
 }
 
+async function deleteFilePost(req, res) {
+    if (!req.user)
+        return res.redirect("/files");
+
+    const id = parseInt(req.params.id);
+
+    const file = await prisma.files.findUnique({ where: { id: id } });
+    if (!file || file.ownerId != req.user.id)
+        res.redirect("/files");
+
+    try {
+        const result = await prisma.files.delete({ where: { id: id } });
+        res.redirect("/files")
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
 
 export {
     newFileFormGet,
@@ -128,5 +148,6 @@ export {
     fileListGet,
     downloadFile,
     getFileById,
-    newFileOnFolderFormPost
+    newFileOnFolderFormPost,
+    deleteFilePost
 }

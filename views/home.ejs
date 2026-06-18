@@ -65,9 +65,14 @@
                                     <%}else{%>
                                         <p>File preview not available</p>
                                         <%}%>
+                                        <div class="file-actions">
+                                            <form action="/files/delete/<%= file.id %>" method="post" class="delete">
+                                                <input type="submit" value="Delete">
+                                            </form>
                                             <form action="/files/download/<%= file.id %>" method="get">
                                                 <input type="submit" value="Download">
                                             </form>
+                                            </div>
                     </div>
                 </a>
                 <% }) %>

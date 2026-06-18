@@ -28,10 +28,10 @@
         </div>
         <h1 class="home-heading">Files in <%= locals.name %>:
         </h1>
-        <div class="messages">
+        <div class="files">
             <% files.map((file)=> { %>
-                <a class="message-card-a" href="/files/file/<%=file.id %>">
-                    <div id=<%=file.id %> class="message-card">
+                <a class="file-card-a" href="/files/file/<%=file.id %>">
+                    <div id=<%=file.id %> class="file-card">
                         <p>
                             <strong>
                                 <%= file.title %>
@@ -48,9 +48,14 @@
                                     <%}else{%>
                                         <p>File preview not available</p>
                                         <%}%>
+                                        <div class="file-actions">
+                                            <form action="/files/delete/<%= file.id %>" method="post" class="delete">
+                                                <input type="submit" value="Delete">
+                                            </form>
                                             <form action="/files/download/<%= file.id %>" method="get">
                                                 <input type="submit" value="Download">
                                             </form>
+                                            </div>
                     </div>
                 </a>
                 <% }) %>
