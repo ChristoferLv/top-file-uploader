@@ -16,7 +16,12 @@
                     <h3>Upload File</h3>
                     <form action="/files/upload-on-folder/<%=folder.id %>" method="POST" enctype="multipart/form-data">
                         <input type="file" name="fileContent" />
-                        <input type="submit" value="Send">
+                        <% if (locals.fileError ) {%>
+                            <p>
+                                <%-locals.fileError %>
+                            </p>
+                            <% }%>
+                                <input type="submit" value="Send">
                     </form>
                 </div>
                 <div class="new-folder-container">
@@ -31,10 +36,14 @@
                     <% if (!folder.share_link ) {%>
                         <form action="/folder/<%=folder.id %>/share" method="post">
                             <label for="duration">Validity days</label>
-                           
-                                <input type="number" min="1" name="duration" id="duration">
-                                <input type="submit" value="Share Folder" />
-                            
+                            <input type="number" min="1" max="365" name="duration" id="duration">
+                            <% if (locals.durationError ) {%>
+                                <p>
+                                    <%-locals.durationError %>
+                                </p>
+                                <% }%>
+                                    <input type="submit" value="Share Folder" />
+
                         </form>
                         <% }else{%>
                             <form action="/folder/share/delete/<%=folder.id %>" method="post">
@@ -49,7 +58,7 @@
                 </h1>
                 <div class="files">
                     <% files.map((file)=> { %>
-                        <% const detailsLink=(locals.is_shared?
+                        <% const detailsLink=(locals.is_shared ?
                             `${locals.shareToken}/file/${file.id}`:`/files/file/${file.id}`) %>
                             <a class="file-card-a" href=<%=detailsLink %>>
                                 <div id='<%=file.id %>' class="file-card">
@@ -72,8 +81,8 @@
                                                         <% if (!locals.is_shared ) {%>
                                                             <div class="file-actions">
                                                                 <form action="/files/delete/<%= file.id %>"
-                                                                    method="post" class="delete">
-                                                                    <input type="submit" value="Delete">
+                                                                    method="post">
+                                                                    <input type="submit" value="Delete" class="delete">
                                                                 </form>
                                                                 <form action="/files/download/<%= file.id %>"
                                                                     method="get">
@@ -89,15 +98,15 @@
 
 
                 <dialog id="update-name-dialog">
-                    <% if(locals.recoveredValues) { %>
-                        <%- include("partials/errors.ejs") %>
+                    <form id="updateName" method="POST" action="/folder/<%= folder.id %>/rename">
+                        <label for="name">New name</label>
+                        <input id="name" name="name" type="text">
+                        <% if(locals.recoveredName) { %>
+                            <p><%-locals.renameError.name %></p>
                             <% } %>
-                                <form id="updateName" method="POST" action="/folder/<%= folder.id %>/rename">
-                                    <label for="name">New name</label>
-                                    <input id="name" name="name" type="text">
-                                    <input type="submit" value="Save">
-                                </form>
-                                <button onclick="closeDialog()">Close</button>
+                                <input type="submit" value="Save">
+                    </form>
+                    <button onclick="closeDialog()">Close</button>
                 </dialog>
 
 
@@ -110,8 +119,11 @@
 
                     recovered = '<%- locals.recoveredName %>'
 
+
                     if (recovered) {
+                        console.log("aqui")
                         name.value = recovered;
+                        myFormDialog.showModal();
                     }
 
                     function closeDialog() {

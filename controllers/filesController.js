@@ -16,7 +16,8 @@ async function getAllFiles(req) {
                     select:
                         { username: true }
                 }
-            }
+            },
+            orderBy:{uploaded_at:"desc"}
         });
         return files;
     } catch (error) {
@@ -38,16 +39,23 @@ async function fileListGet(req, res) {
     res.render("home", { files: filesWithData, folders: folders });
 }
 
-function newFileFormGet(req, res) {
-    if (!req.user)
-        return res.redirect("/")
-    res.render("upload-file")
-}
-
 async function newFileFormPost(req, res) {
     if (!req.user)
-        return res.redirect("/")
+        return res.redirect("/files");
+    if (!req.file) {
+        return res.redirect("/files");
+    }
     let content = null;
+    if (req.file.size > 5000000) {
+        const files = await getAllFiles(req);
+        const filesWithData = files.map((file) => {
+            const extraData = getContentType(file);
+            return { ...file, ...extraData };
+        });
+
+        const folders = await getAllFolders(req);
+        return res.render("home", { files: filesWithData, folders: folders, fileError: "Maximum file size is 5MB" });
+    }
     if (req.file.mimetype.split("/")[0] == 'text')
         content = new Buffer.from(req.file.buffer).toString('utf8');
     else
@@ -71,13 +79,27 @@ async function newFileFormPost(req, res) {
 }
 
 async function newFileOnFolderFormPost(req, res) {
-    if (!req.user)
-        return res.redirect("/")
+    if (!req.user) {
+        return res.redirect("/auth/log-in")
+    }
     const id = parseInt(req.params.id);
-    const folder = await prisma.folders.findUnique({ where: { id: id } });
-    if (!folder || folder.ownerId != req.user.id)
-        res.redirect("/");
+    const folder = await prisma.folders.findUnique({ where: { id: id }, include: { share_link: { select: { link: true } } } });
+    if (folder.ownerId != req.user.id) {
+        return res.redirect("/files");
+    }
+    if (!req.file) {
+        return res.redirect("/folder/" + id);
+    }
     let content = null;
+    if (req.file.size > 5000000) {
+        const result = await prisma.files.findMany({ where: { folders: folder } });
+        const filesWithData = result.map((file) => {
+            const extraData = getContentType(file);
+            return { ...file, ...extraData };
+        });
+
+        return res.render("inside-folder", { files: filesWithData, folder: folder, is_shared: false, fileError: "Maximum file size is 5MB" });
+    }
     if (req.file.mimetype.split("/")[0] == 'text')
         content = new Buffer.from(req.file.buffer).toString('utf8');
     else
@@ -94,7 +116,7 @@ async function newFileOnFolderFormPost(req, res) {
                 folderId: folder.id
             }
         });
-        res.redirect("/folder/" + id)
+        res.redirect("/folder/" + id);
     } catch (error) {
         console.log(error);
         next(error);
@@ -102,7 +124,13 @@ async function newFileOnFolderFormPost(req, res) {
 }
 
 async function downloadFile(req, res) {
+    if (!req.user) {
+        return res.redirect("/auth/log-in")
+    }
     const file = await prisma.files.findUnique({ where: { id: parseInt(req.params.id) } });
+    if (file.ownerId != req.user.id) {
+        return res.redirect("/files");
+    }
     const encode = file.mime.split("/")[0] == 'text' ? "utf8" : "base64";
     const myBuffer = Buffer.from(file.content, encode);
     res.setHeader('Content-Disposition', `attachment; filename=${file.title}`);
@@ -111,6 +139,9 @@ async function downloadFile(req, res) {
 }
 
 async function getFileById(req, res) {
+    if (!req.user) {
+        return res.redirect("/auth/log-in")
+    }
     const file = await prisma.files.findUnique({
         where:
             { id: parseInt(req.params.id) }, include: {
@@ -118,6 +149,9 @@ async function getFileById(req, res) {
                     { select: { username: true } }
             }
     });
+    if (file.ownerId != req.user.id) {
+        return res.redirect("/files");
+    }
     const extraData = getContentType(file);
     res.render("file-details", { file: { ...file, ...extraData } });
 }
@@ -131,12 +165,9 @@ async function getSharedFileById(req, res) {
                 // folders: true
             }
     });
-    const folder = await prisma.folders.findFirst({ where: { share_link: {link:req.params.shareLink} } });
+    const folder = await prisma.folders.findFirst({ where: { share_link: { link: req.params.shareLink } } });
     if (file.folderId != folder.id)
         return res.redirect("/files");
-
-    console.log(file)
-
     const extraData = getContentType(file);
     res.render("file-details", { file: { ...file, ...extraData } });
 }
@@ -162,12 +193,12 @@ async function deleteFilePost(req, res) {
 
 
 export {
-    newFileFormGet,
     newFileFormPost,
     fileListGet,
     downloadFile,
     getFileById,
     newFileOnFolderFormPost,
     deleteFilePost,
-    getSharedFileById
+    getSharedFileById,
+    getAllFiles
 }

@@ -17,14 +17,24 @@
                 <h3>Create new Folder</h3>
                 <form action="/folder" method="POST">
                     <label for="name">Folder name</label>
-                    <input type="text" name="name" id="name" value=<%=locals.nameValue??"" %>>
-                    <input type="submit" value="Create">
+                    <input type="text" name="name" id="name" value=<%=locals.recoveredName %>>
+                    <% if (locals.folderError ) {%>
+                        <p>
+                            <%-locals.folderError.name %>
+                        </p>
+                        <% }%>
+                            <input type="submit" value="Create">
                 </form>
             </div>
             <div class="new-folder-container">
                 <h3>Upload File</h3>
                 <form action="/files/new-file" method="POST" enctype="multipart/form-data">
                     <input type="file" name="fileContent" />
+                    <% if (locals.fileError ) {%>
+                        <p>
+                            <%-locals.fileError %>
+                        </p>
+                        <% }%>
                     <input type="submit" value="Send">
                 </form>
             </div>
@@ -65,13 +75,13 @@
                                     <%}else{%>
                                         <p>File preview not available</p>
                                         <%}%>
-                                        <div class="file-actions">
-                                            <form action="/files/delete/<%= file.id %>" method="post">
-                                                <input type="submit" value="Delete" class="delete">
-                                            </form>
-                                            <form action="/files/download/<%= file.id %>" method="get">
-                                                <input type="submit" value="Download">
-                                            </form>
+                                            <div class="file-actions">
+                                                <form action="/files/delete/<%= file.id %>" method="post">
+                                                    <input type="submit" value="Delete" class="delete">
+                                                </form>
+                                                <form action="/files/download/<%= file.id %>" method="get">
+                                                    <input type="submit" value="Download">
+                                                </form>
                                             </div>
                     </div>
                 </a>
