@@ -37,13 +37,12 @@ async function fileListFromFolderGet(req, res) {
     if (folder.ownerId != parseInt(req.user.id)) {
         return res.redirect("/");
     }
-    console.log(folder)
     const result = await prisma.files.findMany({ where: { folders: folder } });
     const filesWithData = result.map((file) => {
         const extraData = getContentType(file);
         return { ...file, ...extraData };
     });
-    res.render("inside-folder", { files: filesWithData, folder: folder, is_shared:false });
+    res.render("inside-folder", { files: filesWithData, folder: folder, is_shared: false });
 }
 
 async function renameFolder(req, res) {
@@ -75,24 +74,40 @@ async function deleteFolder(req, res) {
 }
 
 async function createShareLink(req, res) {
-    console.log("chamado")
     const id = parseInt(req.params.id);
     const futureDate = new Date();
     const identifier = crypto.randomUUID();
-    futureDate.setDate(futureDate.getDate() + 7);
-    const result = await prisma.share_links.create({
-        data: {
+    futureDate.setDate(futureDate.getDate() + parseInt(req.body.duration));
+    const result = await prisma.share_links.upsert({
+        create: {
             folderId: id,
             link: identifier,
             expires_at: futureDate,
-        }
+        },
+        update: {
+            folderId: id,
+            link: identifier,
+            expires_at: futureDate
+        },
+        where: { folderId: id }
     });
-    console.log(result)
+    res.redirect("/folder/" + id);
+}
+
+async function deleteShareLink(req, res) {
+    const id = parseInt(req.params.id);
+    const folder = await prisma.folders.findUnique({ where: { id: id }, include: { share_link: true } });
+    if (!folder.share_link)
+        res.redirect("/folder/" + id);
+    const result = await prisma.share_links.delete({ where: { id: folder.share_link.id } });
     res.redirect("/folder/" + id);
 }
 
 async function fileListFromSharedFolderGet(req, res) {
     const shareLink = await prisma.share_links.findUnique({ where: { link: req.params.shareLink } });
+    if (shareLink.expires_at.getTime() < Date.now()) {
+        return res.redirect("/files");
+    }
     const folder = await prisma.folders.findUnique({ where: { id: shareLink.folderId } });
 
     const result = await prisma.files.findMany({ where: { folders: folder } });
@@ -100,7 +115,7 @@ async function fileListFromSharedFolderGet(req, res) {
         const extraData = getContentType(file);
         return { ...file, ...extraData };
     });
-    res.render("inside-folder", { files: filesWithData, folder: folder, is_shared:true, shareToken:req.params.shareLink });
+    res.render("inside-folder", { files: filesWithData, folder: folder, is_shared: true, shareToken: req.params.shareLink });
 }
 
 export {
@@ -110,5 +125,6 @@ export {
     renameFolder,
     deleteFolder,
     createShareLink,
-    fileListFromSharedFolderGet
+    fileListFromSharedFolderGet,
+    deleteShareLink
 }

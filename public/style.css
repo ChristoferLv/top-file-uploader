@@ -89,7 +89,7 @@ h1 {
     margin-top: 5px;
 }
 
-.delete input{
+.delete{
     background-color: rgb(207, 0, 0);
     color: white;
     font-weight: bold;
@@ -302,4 +302,9 @@ hr {
 
 .folder-header {
     display: flex;
+}
+
+.share-link{
+    display: flex;
+    gap: 0 10px;
 }
