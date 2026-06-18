@@ -31,7 +31,7 @@
                         <input type="submit" value="Delete Folder" />
                     </form>
                 </div>
-                <div class="new-folder-container">
+                <div class="new-folder-container share-link-container">
                     <h3>Share</h3>
                     <% if (!folder.share_link ) {%>
                         <form action="/folder/<%=folder.id %>/share" method="post">
@@ -49,7 +49,11 @@
                             <form action="/folder/share/delete/<%=folder.id %>" method="post">
                                 <input type="submit" value="Delete share link" class="delete">
                             </form>
-                            <input disabled type="text" value="<%=folder.share_link.link%>" />
+                            <div class="link-wrap" onclick="copyTextToClipboard('<%=folder.share_link.link%>')">
+                                <input readonly onclick="this.select();" class="link-input" type="text"
+                                    value="http://localhost:3000/folder/shared/<%=folder.share_link.link%>" />
+                            </div>
+                            <p class="hidden share-info" id="shareLinkInfo">Share link copied to the clipboard!</p>
                             <% }%>
                 </div>
             </div>
@@ -133,6 +137,19 @@
                     function showDialog() {
                         name.value = '<%- folder.title %>';
                         myFormDialog.showModal();
+                    }
+
+                    function copyTextToClipboard(text) {
+                        const shareLink = `http://localhost:3000/folder/shared/${text}`;
+                        const linkInfo = document.getElementById("shareLinkInfo");
+                        linkInfo.classList.remove("hidden");
+                        navigator.clipboard.writeText(shareLink)
+                            .then(() => {
+                                console.log('Text successfully copied to clipboard');
+                            })
+                            .catch(err => {
+                                console.error('Failed to copy text: ', err);
+                            });
                     }
                 </script>
 </body>
