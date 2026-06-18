@@ -144,9 +144,6 @@
                         const linkInfo = document.getElementById("shareLinkInfo");
                         linkInfo.classList.remove("hidden");
                         navigator.clipboard.writeText(shareLink)
-                            .then(() => {
-                                console.log('Text successfully copied to clipboard');
-                            })
                             .catch(err => {
                                 console.error('Failed to copy text: ', err);
                             });

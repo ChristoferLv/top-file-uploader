@@ -45,6 +45,7 @@ async function newFileFormPost(req, res) {
     if (!req.file) {
         return res.redirect("/files");
     }
+
     let content = null;
     if (req.file.size > 5000000) {
         const files = await getAllFiles(req);
@@ -52,10 +53,12 @@ async function newFileFormPost(req, res) {
             const extraData = getContentType(file);
             return { ...file, ...extraData };
         });
-
+        
         const folders = await getAllFolders(req);
         return res.render("home", { files: filesWithData, folders: folders, fileError: "Maximum file size is 5MB" });
     }
+
+    let fixedOriginalName = Buffer.from(req.file.originalname, 'latin1').toString('utf8');
     if (req.file.mimetype.split("/")[0] == 'text')
         content = new Buffer.from(req.file.buffer).toString('utf8');
     else
@@ -64,7 +67,7 @@ async function newFileFormPost(req, res) {
     try {
         const result = await prisma.files.create({
             data: {
-                title: req.file.originalname,
+                title: fixedOriginalName,
                 mime: req.file.mimetype,
                 size: req.file.size,
                 content: content,
