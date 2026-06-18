@@ -25,20 +25,16 @@
                 <h3>Upload File</h3>
                 <form action="/files/new-file" method="POST" enctype="multipart/form-data">
                     <input type="file" name="fileContent" />
-                    <div class="wrap">
-                        <button type="submit">
-                            Submit
-                        </button>
-                    </div>
+                    <input type="submit" value="Send">
                 </form>
             </div>
         </div>
         <h1 class="home-heading">Hello, <%= user.username %>. Your files:
         </h1>
-        <div class="messages">
+        <div class="folders">
             <% folders.map((folder)=> { %>
-                <a class="message-card-a" href="/folder/<%=folder.id %>">
-                    <div id=<%=folder.id %> class="message-card folder">
+                <a class="file-card-a" href="/folder/<%=folder.id %>">
+                    <div id=<%=folder.id %> class="file-card folder">
                         <p>
                             <strong>
                                 <%= folder.title %>
@@ -49,10 +45,10 @@
                 <% }) %>
         </div>
         <hr class="separator">
-        <div class="messages">
+        <div class="files">
             <% files.map((file)=> { %>
-                <a class="message-card-a" href="/files/file/<%=file.id %>">
-                    <div id=<%=file.id %> class="message-card">
+                <a class="file-card-a" href="/files/file/<%=file.id %>">
+                    <div id=<%=file.id %> class="file-card">
                         <p>
                             <strong>
                                 <%= file.title %>

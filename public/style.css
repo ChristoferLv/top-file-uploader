@@ -20,12 +20,6 @@ header>a>p {
     margin-left: 10px;
 }
 
-.categories-container {
-    display: flex;
-    gap: 0 10px;
-    margin-right: 10px;
-}
-
 header a {
     text-decoration: none;
 }
@@ -34,21 +28,29 @@ h1 {
     margin-left: 6px;
 }
 
-.category-item {
+.header-actions {
+    display: flex;
+    gap: 0 10px;
+    margin-right: 10px;
+}
+
+.header-action-item {
     border: 1px black solid;
     background-color: rgb(255, 228, 56);
     color: black;
     padding: 10px;
 }
 
-.messages {
+.files {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 10vw));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    justify-content: stretch;
     gap: 10px;
     padding: 10px;
+    padding-top: 0;
 }
 
-.message-card {
+.file-card {
     border: 1px solid black;
     background-color: #fefefe;
     padding: 5px;
@@ -60,41 +62,35 @@ h1 {
     height: 250px;
 }
 
-.message-card img {
+.file-card img {
     max-height: 60%;
 }
 
-.message-card-a {
+.file-card-a {
     text-decoration: none;
     color: black;
 }
 
-.message-card p {
+.file-card p {
     margin: 3px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
-.message-card form {
+.file-card form {
     align-self: flex-end;
     margin-top: auto;
 }
 
-.message-card form input {
+.file-card form input {
     cursor: pointer;
     margin: 0;
     margin-top: 5px;
 }
 
-.del-btn {
-    width: 40px;
-    margin: 0;
-    padding: 2px 1px;
-    cursor: pointer;
-}
-
-.login {
+.details-container,
+.auth-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -102,7 +98,7 @@ h1 {
     overflow-y: hidden;
 }
 
-.login>form {
+.auth-container>form {
     background-color: #fff;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -119,7 +115,7 @@ label {
     margin-top: 10px;
     margin-bottom: 5px;
     text-align: left;
-    color: #555;
+    color: #383838;
     font-weight: bold;
 }
 
@@ -133,7 +129,7 @@ input {
     border-radius: 5px;
 }
 
-form button {
+.auth-form button {
     padding: 15px;
     border-radius: 10px;
     margin-top: 15px;
@@ -150,14 +146,6 @@ form button {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.alert button {
-    background-color: rgb(226, 0, 0);
-}
-
-.alert button:hover {
-    background-color: rgb(211, 0, 35);
 }
 
 .error {
@@ -215,18 +203,23 @@ hr {
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     padding: 10px 20px;
-    transition: transform 0.2s;
-    width: 500px;
+    width: 600px;
     gap: 0 15px;
     align-items: center;
     word-break: break-all;
     white-space: normal;
+    justify-content: space-around;
 }
 
 .file-details div {
     flex-grow: 0;
     flex-basis: 250px;
     flex-shrink: 0;
+}
+
+.file-preview{
+    flex-grow: 1;
+    width: 200%;
 }
 
 .file-details img {
@@ -244,9 +237,18 @@ hr {
     padding: 5px;
 }
 
+.folders {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 180px);
+    justify-content: stretch;
+    gap: 10px;
+    padding: 10px;
+    padding-top: 0;
+}
+
 .folder {
     height: 50px;
-    background-color: #e0a94b;
+    background-color: #e0ca4b;
     /* Classic manila folder color */
     border-radius: 0 8px 8px 8px;
     position: relative;
@@ -260,7 +262,7 @@ hr {
     content: '';
     width: 60px;
     height: 20px;
-    background-color: #e0a94b;
+    background-color: #e0ca4b;
     position: absolute;
     top: -20px;
     left: 0;
@@ -283,6 +285,15 @@ hr {
     gap: 5px 0;
 }
 
-.folder-actions p{
+.folder-actions p {
     margin: 2px;
+}
+
+.new-folder-container input[type='file'] {
+    margin-top: 30px;
+    margin-bottom: 21px;
+}
+
+.folder-header {
+    display: flex;
 }
