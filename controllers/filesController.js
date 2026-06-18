@@ -122,6 +122,25 @@ async function getFileById(req, res) {
     res.render("file-details", { file: { ...file, ...extraData } });
 }
 
+async function getSharedFileById(req, res) {
+    const file = await prisma.files.findUnique({
+        where:
+            { id: parseInt(req.params.fileId) }, include: {
+                owner:
+                    { select: { username: true } },
+                // folders: true
+            }
+    });
+    const folder = await prisma.folders.findFirst({ where: { share_link: {link:req.params.shareLink} } });
+    if (file.folderId != folder.id)
+        return res.redirect("/files");
+
+    console.log(file)
+
+    const extraData = getContentType(file);
+    res.render("file-details", { file: { ...file, ...extraData } });
+}
+
 async function deleteFilePost(req, res) {
     if (!req.user)
         return res.redirect("/files");
@@ -149,5 +168,6 @@ export {
     downloadFile,
     getFileById,
     newFileOnFolderFormPost,
-    deleteFilePost
+    deleteFilePost,
+    getSharedFileById
 }

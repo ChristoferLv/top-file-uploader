@@ -10,94 +10,109 @@
 
 <body>
     <%- include("partials/header.ejs") %>
-        <div class="folder-header">
-            <div class="new-folder-container">
-                <h3>Upload File</h3>
-                <form action="/files/upload-on-folder/<%=folderId %>" method="POST" enctype="multipart/form-data">
-                    <input type="file" name="fileContent" />
-                    <input type="submit" value="Send">
-                </form>
+        <% if (!locals.is_shared ) {%>
+            <div class="folder-header">
+                <div class="new-folder-container">
+                    <h3>Upload File</h3>
+                    <form action="/files/upload-on-folder/<%=folder.id %>" method="POST" enctype="multipart/form-data">
+                        <input type="file" name="fileContent" />
+                        <input type="submit" value="Send">
+                    </form>
+                </div>
+                <div class="new-folder-container">
+                    <h3>Actions</h3>
+                    <input type="button" onclick="showDialog()" value="Rename Folder" />
+                    <form action="/folder/<%=folder.id %>/delete" method="post">
+                        <input type="submit" value="Delete Folder" />
+                    </form>
+                </div>
+                <div class="new-folder-container">
+                    <h3>Share</h3>
+                    <form action="/folder/<%=folder.id %>/share" method="post">
+                        <input type="submit" value="Share Folder" />
+                        <input disabled type="text" value="<%=(folder.share_link?folder.share_link.link:" No sharelink")
+                            %>"/>
+                    </form>
+                </div>
             </div>
-            <div class="new-folder-container">
-                <h3>Actions</h3>
-                <input type="button" onclick="showDialog()" value="Rename Folder"/>
-                <form action="/folder/<%=folderId %>/delete" method="post">
-                    <input type="submit" value="Delete Folder"/>
-                </form>
-            </div>
-        </div>
-        <h1 class="home-heading">Files in <%= locals.name %>:
-        </h1>
-        <div class="files">
-            <% files.map((file)=> { %>
-                <a class="file-card-a" href="/files/file/<%=file.id %>">
-                    <div id=<%=file.id %> class="file-card">
-                        <p>
-                            <strong>
-                                <%= file.title %>
-                            </strong>
-                        </p>
-                        <hr>
-                        <% if (file.type=="image" ) {%>
-                            <% const imagData=`data:${file.mime};base64, ${file.content}` %>
-                                <img src='<%-imagData %>' alt="">
-                                <% }else if(file.type=="text" ){ %>
-                                    <div class="multi-line-truncate text-preview">
-                                        <%= file.content %>
-                                    </div>
-                                    <%}else{%>
-                                        <p>File preview not available</p>
-                                        <%}%>
-                                        <div class="file-actions">
-                                            <form action="/files/delete/<%= file.id %>" method="post" class="delete">
-                                                <input type="submit" value="Delete">
-                                            </form>
-                                            <form action="/files/download/<%= file.id %>" method="get">
-                                                <input type="submit" value="Download">
-                                            </form>
-                                            </div>
-                    </div>
-                </a>
-                <% }) %>
-        </div>
+            <% } %>
+                <h1 class="home-heading">Files in <%= folder.title %>:
+                </h1>
+                <div class="files">
+                    <% files.map((file)=> { %>
+                        <% const detailsLink=(locals.is_shared? `${locals.shareToken}/file/${file.id}`:`/files/file/${file.id}`) %>
+                            <a class="file-card-a" href=<%=detailsLink %>>
+                                <div id='<%=file.id %>' class="file-card">
+                                    <p>
+                                        <strong>
+                                            <%= file.title %>
+                                        </strong>
+                                    </p>
+                                    <hr>
+                                    <% if (file.type=="image" ) {%>
+                                        <% const imagData=`data:${file.mime};base64, ${file.content}` %>
+                                            <img src='<%-imagData %>' alt="">
+                                            <% }else if(file.type=="text" ){ %>
+                                                <div class="multi-line-truncate text-preview">
+                                                    <%= file.content %>
+                                                </div>
+                                                <%}else{%>
+                                                    <p>File preview not available</p>
+                                                    <%}%>
+                                                        <% if (!locals.is_shared ) {%>
+                                                            <div class="file-actions">
+                                                                <form action="/files/delete/<%= file.id %>"
+                                                                    method="post" class="delete">
+                                                                    <input type="submit" value="Delete">
+                                                                </form>
+                                                                <form action="/files/download/<%= file.id %>"
+                                                                    method="get">
+                                                                    <input type="submit" value="Download">
+                                                                </form>
+                                                            </div>
+                                                            <% }%>
+                                </div>
+                            </a>
+                            <% }) %>
+                </div>
 
 
 
-        <dialog id="update-name-dialog">
-            <% if(locals.recoveredValues) { %>
-                <%- include("partials/errors.ejs") %>
-                    <% } %>
-                        <form id="updateName" method="POST" action="/folder/<%= locals.folderId %>/rename">
-                            <label for="name">New name</label>
-                            <input id="name" name="name" type="text">
-                            <input type="submit" value="Save">
-                        </form>
-                        <button onclick="closeDialog()">Close</button>
-        </dialog>
+                <dialog id="update-name-dialog">
+                    <% if(locals.recoveredValues) { %>
+                        <%- include("partials/errors.ejs") %>
+                            <% } %>
+                                <form id="updateName" method="POST" action="/folder/<%= folder.id %>/rename">
+                                    <label for="name">New name</label>
+                                    <input id="name" name="name" type="text">
+                                    <input type="submit" value="Save">
+                                </form>
+                                <button onclick="closeDialog()">Close</button>
+                </dialog>
 
 
-        <script>
-            const myFormDialog = document.getElementById('update-name-dialog');
-            const updateForm = document.getElementById('updateName');
-            const name = myFormDialog.querySelector("#name");
+                <script>
+                    const myFormDialog = document.getElementById('update-name-dialog');
+                    const updateForm = document.getElementById('updateName');
+                    const name = myFormDialog.querySelector("#name");
 
-            let recovered = null;
+                    let recovered = null;
 
-            recovered = '<%- locals.recoveredName %>'
+                    recovered = '<%- locals.recoveredName %>'
 
-            if (recovered) {
-                name.value = recovered;
-            }
+                    if (recovered) {
+                        name.value = recovered;
+                    }
 
-            function closeDialog() {
-                myFormDialog.close();
-            }
+                    function closeDialog() {
+                        myFormDialog.close();
+                    }
 
-            function showDialog() {
-                name.value = '<%- locals.name %>';
-                myFormDialog.showModal();
-            }
-        </script>
+                    function showDialog() {
+                        name.value = '<%- folder.title %>';
+                        myFormDialog.showModal();
+                    }
+                </script>
 </body>
 
 </html>

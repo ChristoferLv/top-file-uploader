@@ -33,17 +33,17 @@ async function fileListFromFolderGet(req, res) {
     if (!req.user)
         return res.redirect("/auth/log-in");
 
-    const folder = await prisma.folders.findUnique({ where: { id: parseInt(req.params.id) } });
+    const folder = await prisma.folders.findUnique({ where: { id: parseInt(req.params.id) }, include: { share_link: { select: { link: true } } } });
     if (folder.ownerId != parseInt(req.user.id)) {
         return res.redirect("/");
     }
-
+    console.log(folder)
     const result = await prisma.files.findMany({ where: { folders: folder } });
     const filesWithData = result.map((file) => {
         const extraData = getContentType(file);
         return { ...file, ...extraData };
     });
-    res.render("inside-folder", { files: filesWithData, name: folder.title, folderId: folder.id });
+    res.render("inside-folder", { files: filesWithData, folder: folder, is_shared:false });
 }
 
 async function renameFolder(req, res) {
@@ -74,10 +74,41 @@ async function deleteFolder(req, res) {
     return res.redirect("/files");
 }
 
+async function createShareLink(req, res) {
+    console.log("chamado")
+    const id = parseInt(req.params.id);
+    const futureDate = new Date();
+    const identifier = crypto.randomUUID();
+    futureDate.setDate(futureDate.getDate() + 7);
+    const result = await prisma.share_links.create({
+        data: {
+            folderId: id,
+            link: identifier,
+            expires_at: futureDate,
+        }
+    });
+    console.log(result)
+    res.redirect("/folder/" + id);
+}
+
+async function fileListFromSharedFolderGet(req, res) {
+    const shareLink = await prisma.share_links.findUnique({ where: { link: req.params.shareLink } });
+    const folder = await prisma.folders.findUnique({ where: { id: shareLink.folderId } });
+
+    const result = await prisma.files.findMany({ where: { folders: folder } });
+    const filesWithData = result.map((file) => {
+        const extraData = getContentType(file);
+        return { ...file, ...extraData };
+    });
+    res.render("inside-folder", { files: filesWithData, folder: folder, is_shared:true, shareToken:req.params.shareLink });
+}
+
 export {
     createNewFolderPost,
     getAllFolders,
     fileListFromFolderGet,
     renameFolder,
-    deleteFolder
+    deleteFolder,
+    createShareLink,
+    fileListFromSharedFolderGet
 }

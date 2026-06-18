@@ -47,6 +47,7 @@ model files {
 
 model share_links {
   id         Int      @id @default(autoincrement())
+  link       String   @unique
   created_at DateTime @default(now())
   expires_at DateTime @default(now())
   folder     folders  @relation(fields: [folderId], references: [id])
