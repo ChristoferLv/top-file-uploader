@@ -126,8 +126,8 @@ async function createShareLink(req, res) {
         return res.redirect("/files");
 
     const duration = parseInt(req.body.duration);
-    if(!duration){
-        return res.redirect("/folder/"+id);
+    if (!duration) {
+        return res.redirect("/folder/" + id);
     }
     if (duration > 365) {
         const result = await prisma.files.findMany({ where: { folders: folder } });
@@ -140,18 +140,12 @@ async function createShareLink(req, res) {
     const futureDate = new Date();
     const identifier = crypto.randomUUID().split("-")[0];
     futureDate.setDate(futureDate.getDate() + parseInt(req.body.duration));
-    const result = await prisma.share_links.upsert({
-        create: {
+    const result = await prisma.share_links.create({
+        data: {
             folderId: id,
             link: identifier,
             expires_at: futureDate,
         },
-        update: {
-            folderId: id,
-            link: identifier,
-            expires_at: futureDate
-        },
-        where: { folderId: id }
     });
     res.redirect("/folder/" + id);
 }
@@ -172,6 +166,8 @@ async function deleteShareLink(req, res) {
 
 async function fileListFromSharedFolderGet(req, res) {
     const shareLink = await prisma.share_links.findUnique({ where: { link: req.params.shareLink } });
+    if(!shareLink)
+        return res.redirect("/files");
     if (shareLink.expires_at.getTime() < Date.now()) {
         return res.redirect("/files");
     }
