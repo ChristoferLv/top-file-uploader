@@ -73,6 +73,10 @@ npm run dev
 - Multer
 - bcryptjs
 
+## Visualization
+
+<img width="1910" height="965" alt="file_uploader_screenshot" src="https://github.com/user-attachments/assets/7958be98-f21e-4006-af83-da9f8fccb9f7" />
+
 ---
 
 Project developed following: [The Odin Project - File Uploader](https://www.theodinproject.com/lessons/nodejs-file-uploader)
